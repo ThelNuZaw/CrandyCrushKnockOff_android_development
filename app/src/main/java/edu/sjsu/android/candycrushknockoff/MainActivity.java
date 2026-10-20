@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             return insets;
         });
+
         findViewById(R.id.playButton).setOnClickListener(v ->
                 startActivity(new Intent(this, GameActivity.class)));
     }

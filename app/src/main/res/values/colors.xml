@@ -2,6 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <!-- Sweet Smash palette (ASSET_BIBLE.md, "Style lock") -->
+    <color name="cream">#FFF6E7C1</color>
+    <color name="cream_light">#FFFFF8E6</color>
+    <color name="cherry_red">#FFE23B3B</color>
+    <color name="cherry_red_dark">#FFB82525</color>
+    <color name="gold">#FFE2B23A</color>
+    <color name="gold_dark">#FFB8862A</color>
+    <color name="cocoa">#FF5C3B2E</color>
+
     <color name="title_stroke">#FF0055A2</color>
     <color name="chip_text">#FF0055A2</color>
     <color name="play_bottom">#FF003E75</color>
@@ -12,4 +23,5 @@
     <color name="level_badge">#FF0055A2</color>
     <color name="gold">#FFE5A823</color>
     <color name="sky_fallback">#FFB7DFF6</color>
+
 </resources>
