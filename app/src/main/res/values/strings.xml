@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">CandyCrushKnockOff</string>
 
     <!-- Game-over board -->
@@ -8,4 +9,23 @@
     <string name="game_over_new_best">New best!</string>
     <string name="game_over_play_again">Play again</string>
     <string name="game_over_main_menu">Main menu</string>
+
+    <string name="app_name">Crandy Crush</string>
+    <string name="game_title">Crandy\nCrush</string>
+    <string name="tagline">Garden City sweets</string>
+    <string name="play">Play</string>
+    <string name="level_label">Level 1</string>
+    <string name="score_label">Score 0</string>
+    <string name="moves_label">Moves 20</string>
+    <string name="back">Menu</string>
+
+    <string-array name="candy_names">
+        <item>Gold candy</item>
+        <item>Blue candy</item>
+        <item>Poppy candy</item>
+        <item>Palm candy</item>
+        <item>Sunshine candy</item>
+        <item>Rose candy</item>
+    </string-array>
+
 </resources>
