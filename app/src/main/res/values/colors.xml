@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="title_stroke">#FF0055A2</color>
+    <color name="chip_text">#FF0055A2</color>
+    <color name="play_bottom">#FF003E75</color>
+    <color name="play_top">#FF1A6FBF</color>
+    <color name="play_pressed">#FF003366</color>
+    <color name="board_fill">#FFFFF8EE</color>
+    <color name="board_stroke">#FFE5A823</color>
+    <color name="level_badge">#FF0055A2</color>
+    <color name="gold">#FFE5A823</color>
+    <color name="sky_fallback">#FFB7DFF6</color>
 </resources>
