@@ -3,14 +3,12 @@ package edu.sjsu.android.candycrushknockoff;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -49,12 +47,6 @@ public class GameOverFragment extends DialogFragment {
     private static final String ARG_SCORE = "score";
     private static final String ARG_BEST = "best";
     private static final String ARG_NEW_BEST = "new_best";
-
-    // Pixel size of drawable/gameoverboradlayout.jpg; update if the art changes.
-    private static final int BACKGROUND_WIDTH = 474;
-    private static final int BACKGROUND_HEIGHT = 711;
-
-    private static final float CORNER_RADIUS_DP = 24f;
 
     /**
      * Saves the high score (if beaten) and then shows the panel.
@@ -102,16 +94,6 @@ public class GameOverFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle args = requireArguments();
 
-        // Round the corners of the background art.
-        float cornerRadius = CORNER_RADIUS_DP * getResources().getDisplayMetrics().density;
-        view.setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View v, Outline outline) {
-                outline.setRoundRect(0, 0, v.getWidth(), v.getHeight(), cornerRadius);
-            }
-        });
-        view.setClipToOutline(true);
-
         TextView score = view.findViewById(R.id.game_over_score);
         TextView best = view.findViewById(R.id.game_over_best);
         View newBest = view.findViewById(R.id.game_over_new_best);
@@ -144,19 +126,14 @@ public class GameOverFragment extends DialogFragment {
             return;
         }
         Window window = dialog.getWindow();
-        // Let the background art be the only background.
+        // Let the panel's rounded bg_board card be the only background.
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        // Centered panel, ~88% of the screen width (capped for tablets), sized to
-        // the art's exact 2:3 ratio so the layout's percent guidelines stay in the
-        // clear middle of the frame. Shrink it if it would be too tall.
+        // Centered panel, ~88% of the screen width, capped for tablets.
         float density = getResources().getDisplayMetrics().density;
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        int width = Math.min((int) (screenWidth * 0.88f), (int) (380 * density));
-        width = Math.min(width, (int) (screenHeight * 0.92f * BACKGROUND_WIDTH / BACKGROUND_HEIGHT));
-        int height = width * BACKGROUND_HEIGHT / BACKGROUND_WIDTH;
-        window.setLayout(width, height);
+        int width = Math.min((int) (screenWidth * 0.88f), (int) (360 * density));
+        window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         // Dim the board (and blur it on Android 12+) so it stays visible behind the panel.
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
