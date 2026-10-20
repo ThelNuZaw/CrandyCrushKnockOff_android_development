@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Secondary button: white pill with the same gold trim as bg_play_button. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="34dp" />
+            <solid android:color="@color/menu_button_pressed" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/gold" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="34dp" />
+            <solid android:color="@color/white" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/gold" />
+        </shape>
+    </item>
+</selector>
