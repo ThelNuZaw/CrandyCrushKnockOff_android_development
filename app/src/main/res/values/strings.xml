@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">CandyCrushKnockOff</string>
+
+    <!-- Game-over board -->
+    <string name="game_over_title">Game Over</string>
+    <string name="game_over_score">Score: %1$d</string>
+    <string name="game_over_best">Best: %1$d</string>
+    <string name="game_over_new_best">New best!</string>
+    <string name="game_over_play_again">Play again</string>
+    <string name="game_over_main_menu">Main menu</string>
 </resources>

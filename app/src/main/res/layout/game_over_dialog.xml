@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Background art is 474x711 (2:3). GameOverFragment sizes the dialog window to
+    that exact ratio, so the percent guidelines below always line up with the
+    clear middle of the frame (inside the drips, lollipops and candy pile).
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gameoverboradlayout"
+    tools:context=".GameOverFragment"
+    tools:layout_height="540dp"
+    tools:layout_width="360dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/game_over_content_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.24" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/game_over_content_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.76" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/game_over_content_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.21" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/game_over_content_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.84" />
+
+    <TextView
+        android:id="@+id/game_over_title"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:accessibilityHeading="true"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:maxLines="1"
+        android:shadowColor="@color/white"
+        android:shadowDx="0"
+        android:shadowDy="3"
+        android:shadowRadius="2"
+        android:text="@string/game_over_title"
+        android:textColor="@color/cherry_red"
+        app:autoSizeMaxTextSize="34sp"
+        app:autoSizeMinTextSize="18sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@id/game_over_divider_top"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toTopOf="@id/game_over_content_top"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <View
+        android:id="@+id/game_over_divider_top"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/gold_divider"
+        app:layout_constraintBottom_toTopOf="@id/game_over_score"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_title" />
+
+    <TextView
+        android:id="@+id/game_over_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/cocoa"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/game_over_best"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_divider_top"
+        tools:text="Score: 980" />
+
+    <TextView
+        android:id="@+id/game_over_best"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/cocoa"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/game_over_new_best"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_score"
+        tools:text="Best: 1240" />
+
+    <!-- Only visible when this run beat the saved best. -->
+    <TextView
+        android:id="@+id/game_over_new_best"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/new_best_badge"
+        android:paddingStart="16dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="6dp"
+        android:text="@string/game_over_new_best"
+        android:textColor="@color/cocoa"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/game_over_divider_bottom"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_best"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/game_over_divider_bottom"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/gold_divider"
+        app:layout_constraintBottom_toTopOf="@id/game_over_play_again"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_new_best"
+        app:layout_goneMarginTop="10dp" />
+
+    <!-- Label is baked into the art, so contentDescription gives screen readers the text.
+         fitCenter keeps the art's proportions; the whole row stays tappable. -->
+    <ImageButton
+        android:id="@+id/game_over_play_again"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:background="@null"
+        android:contentDescription="@string/game_over_play_again"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_primary_pill"
+        app:layout_constraintBottom_toTopOf="@id/game_over_main_menu"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_divider_bottom" />
+
+    <!-- Round home icon; contentDescription gives screen readers "Main menu". -->
+    <ImageButton
+        android:id="@+id/game_over_main_menu"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:contentDescription="@string/game_over_main_menu"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_secondary_pill"
+        app:layout_constraintBottom_toBottomOf="@id/game_over_content_bottom"
+        app:layout_constraintEnd_toEndOf="@id/game_over_content_end"
+        app:layout_constraintStart_toStartOf="@id/game_over_content_start"
+        app:layout_constraintTop_toBottomOf="@id/game_over_play_again" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
