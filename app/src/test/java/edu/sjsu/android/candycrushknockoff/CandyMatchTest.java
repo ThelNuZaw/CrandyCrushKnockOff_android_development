@@ -217,6 +217,76 @@ public class CandyMatchTest {
         assertEquals((4 + 7) % 2, board[4][7]);
     }
 
+    @Test
+    public void candiesFallDownIntoTheGaps() {
+        int[][] board = {
+                {1, 4, CandyMatch.EMPTY},
+                {CandyMatch.EMPTY, 5, 2},
+                {3, CandyMatch.EMPTY, CandyMatch.EMPTY},
+                {CandyMatch.EMPTY, 6, 7}
+        };
+
+        assertEquals(5, CandyMatch.dropCandies(board));
+
+        assertEquals(CandyMatch.EMPTY, board[0][0]);
+        assertEquals(CandyMatch.EMPTY, board[1][0]);
+        assertEquals(1, board[2][0]);
+        assertEquals(3, board[3][0]);
+
+        assertEquals(CandyMatch.EMPTY, board[0][1]);
+        assertEquals(4, board[1][1]);
+        assertEquals(5, board[2][1]);
+        assertEquals(6, board[3][1]);
+
+        // A sideways gap is not a fall. The right column only slides down.
+        assertEquals(CandyMatch.EMPTY, board[0][2]);
+        assertEquals(CandyMatch.EMPTY, board[1][2]);
+        assertEquals(2, board[2][2]);
+        assertEquals(7, board[3][2]);
+
+        // Packed columns and empty columns stay put.
+        int[][] packed = {
+                {1, CandyMatch.EMPTY},
+                {2, CandyMatch.EMPTY}
+        };
+        assertEquals(0, CandyMatch.dropCandies(packed));
+        assertEquals(1, packed[0][0]);
+        assertEquals(2, packed[1][0]);
+        assertEquals(CandyMatch.EMPTY, packed[0][1]);
+    }
+
+    @Test
+    public void fallingCandiesCanMakeAnotherMatch() {
+        int[][] board = {
+                {1, 0, 4},
+                {1, 3, 5},
+                {2, 2, 2},
+                {1, 4, 6}
+        };
+
+        // The middle row clears, then the two 1s above fall onto the 1 below.
+        assertEquals(6, CandyMatch.removeAndDrop(board));
+
+        assertEquals(CandyMatch.EMPTY, board[0][0]);
+        assertEquals(CandyMatch.EMPTY, board[1][0]);
+        assertEquals(CandyMatch.EMPTY, board[2][0]);
+        assertEquals(CandyMatch.EMPTY, board[3][0]);
+
+        assertEquals(CandyMatch.EMPTY, board[0][1]);
+        assertEquals(0, board[1][1]);
+        assertEquals(3, board[2][1]);
+        assertEquals(4, board[3][1]);
+
+        assertEquals(CandyMatch.EMPTY, board[0][2]);
+        assertEquals(4, board[1][2]);
+        assertEquals(5, board[2][2]);
+        assertEquals(6, board[3][2]);
+
+        // Nothing is left floating above a hole.
+        assertEquals(0, CandyMatch.dropCandies(board));
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
     private static int count(boolean[][] matched) {
         int total = 0;
 

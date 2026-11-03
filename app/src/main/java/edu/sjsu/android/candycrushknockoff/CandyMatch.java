@@ -48,6 +48,60 @@ public class CandyMatch {
         return removed;
     }
 
+    /**
+     * Moves candies down to fill the empty spaces after a match.
+     * The candies keep their order. Empty cells stay on top.
+     * Returns how many candies moved.
+     */
+    public static int dropCandies(int[][] board) {
+        int rows = board.length;
+        int cols = board[0].length;
+        int moved = 0;
+
+        for (int col = 0; col < cols; col++) {
+            int write = rows - 1;
+
+            for (int row = rows - 1; row >= 0; row--) {
+                int candy = board[row][col];
+
+                if (candy == EMPTY) {
+                    continue;
+                }
+
+                if (write != row) {
+                    board[write][col] = candy;
+                    board[row][col] = EMPTY;
+                    moved++;
+                }
+
+                write--;
+            }
+        }
+
+        return moved;
+    }
+
+    /**
+     * Removes a match, then lets the candies above fall.
+     * Repeats when the fall makes another match.
+     * Returns how many candies were cleared.
+     */
+    public static int removeAndDrop(int[][] board) {
+        int removed = 0;
+        int cleared;
+
+        do {
+            cleared = removeMatches(board);
+            removed += cleared;
+
+            if (cleared > 0) {
+                dropCandies(board);
+            }
+        } while (cleared > 0);
+
+        return removed;
+    }
+
     private static void markHorizontal(
             int[][] board,
             boolean[][] matched,

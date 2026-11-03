@@ -175,8 +175,6 @@ public class GameActivity extends AppCompatActivity
                 );
 
                 piece.setEnabled(!gameEnded);
-//                // TEMPORARY TEST: each candy tap simulates a move worth 100 points.
-//                piece.setOnClickListener(v -> onMoveCompleted(100));
 
                 GridLayout.LayoutParams params =
                         new GridLayout.LayoutParams(
@@ -218,7 +216,8 @@ public class GameActivity extends AppCompatActivity
     }
 
     /**
-     * Removes candies after a valid match and updates the screen.
+     * Removes candies after a valid match, lets the candies above
+     * fall into the gaps, and updates the screen.
      * Returns how many candies were cleared.
      *
      * Call this after a swap that creates a match. A board with no
@@ -231,7 +230,7 @@ public class GameActivity extends AppCompatActivity
         }
 
         int[][] board = readBoard();
-        int removed = CandyMatch.removeMatches(board);
+        int removed = CandyMatch.removeAndDrop(board);
         writeBoard(board);
 
         if (removed > 0) {
@@ -239,6 +238,26 @@ public class GameActivity extends AppCompatActivity
         }
 
         return removed;
+    }
+
+    /**
+     * Moves candies down to fill empty spaces and updates the screen.
+     * Returns how many candies moved.
+     */
+    public int dropCandies() {
+        if (!hasBoard()) {
+            return 0;
+        }
+
+        int[][] board = readBoard();
+        int moved = CandyMatch.dropCandies(board);
+        writeBoard(board);
+
+        if (moved > 0) {
+            refreshCandies();
+        }
+
+        return moved;
     }
 
     /**
