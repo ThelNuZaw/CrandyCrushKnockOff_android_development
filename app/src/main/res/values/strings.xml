@@ -1,5 +1,10 @@
 <resources>
 
+    <string name="game_won_title">You Win!</string>
+    <string name="game_lost_title">You Lost!</string>
+    <string name="score_progress">Score %1$d / %2$d</string>
+    <string name="moves_remaining">Moves %1$d</string>
+
     <string name="game_over_title">Game Over</string>
     <string name="game_over_score">Score: %1$d</string>
     <string name="game_over_best">Best: %1$d</string>
