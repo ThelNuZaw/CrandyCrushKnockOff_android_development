@@ -21,6 +21,8 @@
     <string name="moves_label">Moves 20</string>
     <string name="back">Menu</string>
 
+    <string name="empty_cell">Empty</string>
+
     <string-array name="candy_names">
         <item>Gold candy</item>
         <item>Blue candy</item>
