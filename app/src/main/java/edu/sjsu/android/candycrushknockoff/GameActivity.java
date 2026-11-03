@@ -163,7 +163,7 @@ public class GameActivity extends AppCompatActivity
                 placed[row][col] = candy;
 
                 ImageView piece = new ImageView(this);
-                piece.setImageResource(CANDIES[candy]);
+                showCandy(piece, candy, names);
                 piece.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                 int padding = dp(3);
@@ -174,7 +174,6 @@ public class GameActivity extends AppCompatActivity
                         padding
                 );
 
-                piece.setContentDescription(names[candy]);
                 piece.setEnabled(!gameEnded);
 //                // TEMPORARY TEST: each candy tap simulates a move worth 100 points.
 //                piece.setOnClickListener(v -> onMoveCompleted(100));
@@ -204,6 +203,42 @@ public class GameActivity extends AppCompatActivity
                     COLS
             );
         }
+    }
+
+    /**
+     * Detects horizontal and vertical matches of three or more
+     * identical candies on the current board.
+     */
+    public boolean[][] findMatches() {
+        if (!hasBoard()) {
+            return new boolean[ROWS][COLS];
+        }
+
+        return CandyMatch.findMatches(readBoard());
+    }
+
+    /**
+     * Removes candies after a valid match and updates the screen.
+     * Returns how many candies were cleared.
+     *
+     * Call this after a swap that creates a match. A board with no
+     * match is left as it is. onMoveCompleted is still called once,
+     * after the whole move is finished.
+     */
+    public int removeMatchedCandies() {
+        if (!hasBoard()) {
+            return 0;
+        }
+
+        int[][] board = readBoard();
+        int removed = CandyMatch.removeMatches(board);
+        writeBoard(board);
+
+        if (removed > 0) {
+            refreshCandies();
+        }
+
+        return removed;
     }
 
     /**
@@ -327,6 +362,79 @@ public class GameActivity extends AppCompatActivity
 
         startActivity(menu);
         finish();
+    }
+
+    private boolean hasBoard() {
+        return boardState != null && boardState.length == ROWS * COLS;
+    }
+
+    private int[][] readBoard() {
+        int[][] board = new int[ROWS][COLS];
+
+        for (int row = 0; row < ROWS; row++) {
+            System.arraycopy(
+                    boardState,
+                    row * COLS,
+                    board[row],
+                    0,
+                    COLS
+            );
+        }
+
+        return board;
+    }
+
+    private void writeBoard(int[][] board) {
+        for (int row = 0; row < ROWS; row++) {
+            System.arraycopy(
+                    board[row],
+                    0,
+                    boardState,
+                    row * COLS,
+                    COLS
+            );
+        }
+    }
+
+    private void refreshCandies() {
+        if (!filled || !hasBoard()) {
+            return;
+        }
+
+        if (boardGrid.getChildCount() != boardState.length) {
+            return;
+        }
+
+        String[] names = getResources()
+                .getStringArray(R.array.candy_names);
+
+        for (int i = 0; i < boardState.length; i++) {
+            showCandy(
+                    (ImageView) boardGrid.getChildAt(i),
+                    boardState[i],
+                    names
+            );
+        }
+    }
+
+    /**
+     * Shows one candy, or a blank cell after that candy is removed.
+     */
+    private void showCandy(
+            ImageView piece,
+            int candy,
+            String[] names
+    ) {
+        if (candy == CandyMatch.EMPTY) {
+            piece.setImageDrawable(null);
+            piece.setContentDescription(
+                    getString(R.string.empty_cell)
+            );
+            return;
+        }
+
+        piece.setImageResource(CANDIES[candy]);
+        piece.setContentDescription(names[candy]);
     }
 
     private boolean makesThree(
