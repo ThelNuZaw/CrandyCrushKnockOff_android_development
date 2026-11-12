@@ -23,7 +23,6 @@ public class GameActivity extends AppCompatActivity
     private static final int COLS = 8;
 
     // Temporary level rules.
-    private static final int STARTING_MOVES = 20;
     private static final int TARGET_SCORE = 1000;
 
     private static final int[] CANDIES = {
@@ -36,13 +35,14 @@ public class GameActivity extends AppCompatActivity
     };
 
     private int score = 0;
-    private int movesRemaining = STARTING_MOVES;
+    private final MoveCounter moves = new MoveCounter();
     private boolean gameEnded = false;
     private boolean won = false;
 
     private GridLayout boardGrid;
     private boolean filled;
     private int[] boardState;
+    private final Random random = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +78,11 @@ public class GameActivity extends AppCompatActivity
         // Restore progress after rotation or activity recreation.
         if (savedInstanceState != null) {
             score = savedInstanceState.getInt("score", 0);
-            movesRemaining = savedInstanceState.getInt(
-                    "moves",
-                    STARTING_MOVES
+            moves.setRemaining(
+                    savedInstanceState.getInt(
+                            "moves",
+                            MoveCounter.STARTING_MOVES
+                    )
             );
             gameEnded = savedInstanceState.getBoolean("ended", false);
             won = savedInstanceState.getBoolean("won", false);
@@ -175,8 +177,6 @@ public class GameActivity extends AppCompatActivity
                 );
 
                 piece.setEnabled(!gameEnded);
-//                // TEMPORARY TEST: each candy tap simulates a move worth 100 points.
-//                piece.setOnClickListener(v -> onMoveCompleted(100));
 
                 GridLayout.LayoutParams params =
                         new GridLayout.LayoutParams(
@@ -218,12 +218,13 @@ public class GameActivity extends AppCompatActivity
     }
 
     /**
-     * Removes candies after a valid match and updates the screen.
+     * Removes candies after a valid match, lets the candies above
+     * fall into the gaps, and generates new candies at the top.
      * Returns how many candies were cleared.
      *
      * Call this after a swap that creates a match. A board with no
-     * match is left as it is. onMoveCompleted is still called once,
-     * after the whole move is finished.
+     * match and no empty cells is left as it is. onMoveCompleted is
+     * still called once, after the whole move is finished.
      */
     public int removeMatchedCandies() {
         if (!hasBoard()) {
@@ -231,7 +232,11 @@ public class GameActivity extends AppCompatActivity
         }
 
         int[][] board = readBoard();
-        int removed = CandyMatch.removeMatches(board);
+        int removed = CandyMatch.removeDropAndRefill(
+                board,
+                random,
+                CANDIES.length
+        );
         writeBoard(board);
 
         if (removed > 0) {
@@ -242,10 +247,56 @@ public class GameActivity extends AppCompatActivity
     }
 
     /**
+     * Generates new candies in the empty cells at the top
+     * and updates the screen.
+     * Returns how many candies were added.
+     */
+    public int generateNewCandies() {
+        if (!hasBoard()) {
+            return 0;
+        }
+
+        int[][] board = readBoard();
+        int added = CandyMatch.generateNewCandies(
+                board,
+                random,
+                CANDIES.length
+        );
+        writeBoard(board);
+
+        if (added > 0) {
+            refreshCandies();
+        }
+
+        return added;
+    }
+
+    /**
+     * Moves candies down to fill empty spaces and updates the screen.
+     * Returns how many candies moved.
+     */
+    public int dropCandies() {
+        if (!hasBoard()) {
+            return 0;
+        }
+
+        int[][] board = readBoard();
+        int moved = CandyMatch.dropCandies(board);
+        writeBoard(board);
+
+        if (moved > 0) {
+            refreshCandies();
+        }
+
+        return moved;
+    }
+
+    /**
      * Your teammate calls this ONCE on the UI thread after a valid swap
      * and all resulting matches and chain reactions finish.
      *
      * pointsEarned is the total score earned from that entire move.
+     * This spends one move and updates the Moves label.
      * Invalid swaps must not call this method.
      */
     public void onMoveCompleted(int pointsEarned) {
@@ -266,12 +317,12 @@ public class GameActivity extends AppCompatActivity
                 (long) score + pointsEarned
         );
 
-        movesRemaining--;
+        moves.spend();
 
         updateLabels();
 
         // Check winning first so reaching the target on the final move wins.
-        if (score >= TARGET_SCORE || movesRemaining == 0) {
+        if (score >= TARGET_SCORE || moves.isOut()) {
             won = score >= TARGET_SCORE;
             gameEnded = true;
 
@@ -292,6 +343,10 @@ public class GameActivity extends AppCompatActivity
         return gameEnded;
     }
 
+    public int getMovesRemaining() {
+        return moves.getRemaining();
+    }
+
     private void updateLabels() {
         TextView scoreLabel = findViewById(R.id.scoreLabel);
         TextView movesLabel = findViewById(R.id.movesLabel);
@@ -307,7 +362,7 @@ public class GameActivity extends AppCompatActivity
         movesLabel.setText(
                 getString(
                         R.string.moves_remaining,
-                        movesRemaining
+                        moves.getRemaining()
                 )
         );
     }
@@ -336,7 +391,7 @@ public class GameActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt("score", score);
-        outState.putInt("moves", movesRemaining);
+        outState.putInt("moves", moves.getRemaining());
         outState.putBoolean("ended", gameEnded);
         outState.putBoolean("won", won);
         outState.putIntArray("board", boardState);
