@@ -1,5 +1,7 @@
 package edu.sjsu.android.candycrushknockoff;
 
+import java.util.Random;
+
 /**
  * Finds and clears lines of three or more identical candies.
  * The board is a rectangle of candy ids. An empty cell is not a candy.
@@ -100,6 +102,167 @@ public class CandyMatch {
         } while (cleared > 0);
 
         return removed;
+    }
+
+    /**
+     * Generates new candies in the empty cells at the top.
+     * Candies already on the board stay where they are.
+     * A new candy is picked so it does not finish a line of three
+     * when another candy can be placed there instead.
+     * Returns how many candies were added.
+     */
+    public static int generateNewCandies(
+            int[][] board,
+            Random random,
+            int kinds
+    ) {
+        int rows = board.length;
+        int cols = board[0].length;
+        int added = 0;
+
+        for (int col = 0; col < cols; col++) {
+            for (int row = 0; row < rows; row++) {
+                if (board[row][col] != EMPTY) {
+                    break;
+                }
+
+                board[row][col] = pickCandy(
+                        board,
+                        row,
+                        col,
+                        random,
+                        kinds
+                );
+                added++;
+            }
+        }
+
+        return added;
+    }
+
+    /**
+     * Removes a match, lets the candies fall, then refills the top.
+     * Repeats when the new candies make another match.
+     * Returns how many candies were cleared.
+     */
+    public static int removeDropAndRefill(
+            int[][] board,
+            Random random,
+            int kinds
+    ) {
+        int removed = 0;
+        int limit = board.length * board[0].length;
+
+        for (int pass = 0; pass < limit; pass++) {
+            removed += removeAndDrop(board);
+
+            if (!hasEmpty(board)) {
+                break;
+            }
+
+            generateNewCandies(board, random, kinds);
+
+            if (!hasMatch(board)) {
+                break;
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Picks a candy that does not complete a line.
+     * If every candy would make a line, the last one is still placed
+     * so the cell does not stay empty.
+     */
+    private static int pickCandy(
+            int[][] board,
+            int row,
+            int col,
+            Random random,
+            int kinds
+    ) {
+        int first = random.nextInt(kinds);
+        int chosen = first;
+
+        for (int attempt = 0; attempt < kinds; attempt++) {
+            chosen = (first + attempt) % kinds;
+
+            if (!completesLine(board, row, col, chosen)) {
+                return chosen;
+            }
+        }
+
+        return chosen;
+    }
+
+    private static boolean completesLine(
+            int[][] board,
+            int row,
+            int col,
+            int candy
+    ) {
+        int rows = board.length;
+        int cols = board[0].length;
+        int across = 1;
+
+        for (int next = col - 1;
+                next >= 0 && board[row][next] == candy;
+                next--) {
+            across++;
+        }
+
+        for (int next = col + 1;
+                next < cols && board[row][next] == candy;
+                next++) {
+            across++;
+        }
+
+        if (across >= 3) {
+            return true;
+        }
+
+        int vertical = 1;
+
+        for (int next = row - 1;
+                next >= 0 && board[next][col] == candy;
+                next--) {
+            vertical++;
+        }
+
+        for (int next = row + 1;
+                next < rows && board[next][col] == candy;
+                next++) {
+            vertical++;
+        }
+
+        return vertical >= 3;
+    }
+
+    private static boolean hasEmpty(int[][] board) {
+        for (int[] row : board) {
+            for (int candy : row) {
+                if (candy == EMPTY) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean hasMatch(int[][] board) {
+        boolean[][] matched = findMatches(board);
+
+        for (boolean[] row : matched) {
+            for (boolean cell : row) {
+                if (cell) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static void markHorizontal(

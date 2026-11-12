@@ -2,6 +2,8 @@ package edu.sjsu.android.candycrushknockoff;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -285,6 +287,157 @@ public class CandyMatchTest {
         // Nothing is left floating above a hole.
         assertEquals(0, CandyMatch.dropCandies(board));
         assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
+    @Test
+    public void newCandiesFillOnlyTheEmptyCellsAtTheTop() {
+        int[][] board = {
+                {CandyMatch.EMPTY, CandyMatch.EMPTY, 1},
+                {CandyMatch.EMPTY, 2, 3},
+                {4, 5, 6}
+        };
+
+        assertEquals(3, CandyMatch.generateNewCandies(board, always(0), 6));
+
+        assertEquals(0, board[0][0]);
+        assertEquals(0, board[1][0]);
+        assertEquals(4, board[2][0]);
+
+        assertEquals(0, board[0][1]);
+        assertEquals(2, board[1][1]);
+        assertEquals(5, board[2][1]);
+
+        // This column was already full, so nothing is generated there.
+        assertEquals(1, board[0][2]);
+        assertEquals(3, board[1][2]);
+        assertEquals(6, board[2][2]);
+
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
+    @Test
+    public void aHoleUnderACandyIsNotRefilledFromTheTop() {
+        int[][] board = {
+                {1, CandyMatch.EMPTY},
+                {CandyMatch.EMPTY, 2}
+        };
+
+        assertEquals(1, CandyMatch.generateNewCandies(board, always(0), 4));
+
+        assertEquals(1, board[0][0]);
+        assertEquals(CandyMatch.EMPTY, board[1][0]);
+        assertEquals(0, board[0][1]);
+        assertEquals(2, board[1][1]);
+    }
+
+    @Test
+    public void newCandyAvoidsFinishingALine() {
+        int[][] board = {
+                {CandyMatch.EMPTY},
+                {1},
+                {1}
+        };
+
+        // The first choice is the same candy as the two below it.
+        CandyMatch.generateNewCandies(board, always(1), 2);
+
+        assertEquals(0, board[0][0]);
+        assertEquals(1, board[1][0]);
+        assertEquals(1, board[2][0]);
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
+    @Test
+    public void refillAfterAFallLeavesNoHoles() {
+        int[][] board = {
+                {1, 0, 4},
+                {1, 3, 5},
+                {2, 2, 2},
+                {1, 4, 6}
+        };
+
+        assertEquals(6, CandyMatch.removeDropAndRefill(board, always(0), 6));
+
+        assertEquals(0, board[0][0]);
+        assertEquals(0, board[0][1]);
+        assertEquals(1, board[0][2]);
+
+        assertEquals(0, board[1][0]);
+        assertEquals(0, board[1][1]);
+        assertEquals(4, board[1][2]);
+
+        assertEquals(1, board[2][0]);
+        assertEquals(3, board[2][1]);
+        assertEquals(5, board[2][2]);
+
+        assertEquals(0, board[3][0]);
+        assertEquals(4, board[3][1]);
+        assertEquals(6, board[3][2]);
+
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+        assertFalse(containsEmpty(board));
+    }
+
+    @Test
+    public void aFullBoardWithNoMatchIsLeftAlone() {
+        int[][] board = {
+                {0, 1, 2},
+                {1, 2, 0},
+                {2, 0, 1}
+        };
+        int[][] before = copy(board);
+
+        assertEquals(0, CandyMatch.generateNewCandies(board, always(3), 6));
+        assertEquals(0, CandyMatch.removeDropAndRefill(board, always(3), 6));
+
+        assertEquals(before[0][0], board[0][0]);
+        assertEquals(before[1][1], board[1][1]);
+        assertEquals(before[2][2], board[2][2]);
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
+    @Test
+    public void refillingTheGameBoardStaysInRange() {
+        int[][] board = new int[8][8];
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                board[row][col] = CandyMatch.EMPTY;
+            }
+        }
+
+        int added = CandyMatch.generateNewCandies(board, new Random(1), 6);
+
+        assertEquals(64, added);
+
+        for (int[] row : board) {
+            for (int candy : row) {
+                assertTrue(candy >= 0 && candy < 6);
+            }
+        }
+
+        assertEquals(0, count(CandyMatch.findMatches(board)));
+    }
+
+    private static boolean containsEmpty(int[][] board) {
+        for (int[] row : board) {
+            for (int candy : row) {
+                if (candy == CandyMatch.EMPTY) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static Random always(int value) {
+        return new Random() {
+            @Override
+            public int nextInt(int bound) {
+                return Math.floorMod(value, bound);
+            }
+        };
     }
 
     private static int count(boolean[][] matched) {
